@@ -7,6 +7,7 @@ as
 --------------------------------------------------------------------------------
 function get_url
 ( p_dynamic_action apex_plugin.t_dynamic_action
+, p_triggering_element varchar2 default 'document'
 ) return varchar2
 as
     l_url_source      p_dynamic_action.attribute_01%type := nvl(p_dynamic_action.attribute_01, 'static');
@@ -30,6 +31,10 @@ begin
 
     if l_prepare_url then
         l_url := apex_util.prepare_url(l_url, 'SESSION');
+        l_url := apex_util.prepare_url(p_url                => l_url
+                                     , p_checksum_type      => 'SESSION'
+                                     , p_triggering_element => p_triggering_element);
+
     end if;
 
     return l_url;
@@ -117,6 +122,9 @@ as
     l_new_window           boolean                            := nvl(p_dynamic_action.attribute_08,'N') = 'Y';
     l_item_names           apex_t_varchar2;
 
+    --ajax parameters
+    l_triggering_element varchar2(32767) := apex_application.g_x01;
+
     -- resulting content
     l_content              clob                       := '';
 
@@ -140,7 +148,7 @@ begin
     -- return our JSON response with an updated URL
     apex_json.open_object;
     apex_json.write('status'   , 'success'                );
-    apex_json.write('url'      , get_url(p_dynamic_action));
+    apex_json.write('url'      , get_url(p_dynamic_action, l_triggering_element));
     apex_json.write('context'  , l_context                );
     apex_json.write('newWindow', l_new_window             );
     apex_json.close_object;

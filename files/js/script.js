@@ -14,6 +14,7 @@ FOS.utils = window.FOS.utils || {};
  * @param {string}   [config.itemsToSubmit]         The APEX page items to submit i.e. updating session state prior to the redirect
  * @param {boolean}  [config.executePlsql]          true/false if we are to execute and PLSQL prior to the redirect
  */
+
 FOS.utils.navigation = function (daContext, config) {
 
 	var pluginName = 'FOS - Redirect', me = this;
@@ -37,6 +38,7 @@ FOS.utils.navigation = function (daContext, config) {
 		if (config.itemsToSubmit) {
 			requestData.pageItems = config.itemsToSubmit
 		}
+        requestData.x01 = daContext.triggeringElement.id;
 
 		//configures the showing and hiding of a possible spinner
 		if (spinnerSettings.showSpinner) {
@@ -84,5 +86,3 @@ FOS.utils.navigation = function (daContext, config) {
 	me[(config.itemsToSubmit || config.executePlsql) ? 'ajaxRedirect' : 'redirect'](config, daContext);
 
 };
-
-
